@@ -1,0 +1,56 @@
+module.exports = (sequelize, DataTypes) =>
+  sequelize.define(
+    "PaperPosition",
+    {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      user_id: { type: DataTypes.STRING(128), allowNull: false },
+      symbol_key: { type: DataTypes.STRING(100), allowNull: false },
+      display_symbol: { type: DataTypes.STRING(100), allowNull: false },
+      underlying: { type: DataTypes.STRING(24), allowNull: false },
+      expiry_date: { type: DataTypes.DATEONLY, allowNull: false },
+      strike_price: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
+      option_type: { type: DataTypes.STRING(4), allowNull: false },
+      lot_size: { type: DataTypes.INTEGER, allowNull: false },
+      product_type: { type: DataTypes.STRING(8), allowNull: false },
+      status: {
+        type: DataTypes.STRING(12),
+        allowNull: false,
+        defaultValue: "OPEN",
+      },
+      net_quantity: { type: DataTypes.INTEGER, allowNull: false },
+      average_price: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
+      last_price: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
+      margin_blocked: {
+        type: DataTypes.DECIMAL(16, 2),
+        allowNull: false,
+        defaultValue: 0,
+      },
+      sl_trigger_price: DataTypes.DECIMAL(12, 2),
+      target_trigger_price: DataTypes.DECIMAL(12, 2),
+      planned_rr: { type: DataTypes.DECIMAL(8, 2), defaultValue: 0 },
+      was_sl_widened: { type: DataTypes.BOOLEAN, defaultValue: false },
+      realized_gross_pnl: { type: DataTypes.DECIMAL(16, 2), defaultValue: 0 },
+      total_charges: { type: DataTypes.DECIMAL(14, 2), defaultValue: 0 },
+      realized_net_pnl: { type: DataTypes.DECIMAL(16, 2), defaultValue: 0 },
+      opened_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      closed_at: DataTypes.DATE,
+    },
+    {
+      tableName: "paper_positions",
+      underscored: true,
+      createdAt: false,
+      updatedAt: "updated_at",
+      indexes: [
+        { fields: ["user_id", "status"] },
+        { fields: ["symbol_key", "status"] },
+      ],
+    },
+  );

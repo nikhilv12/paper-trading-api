@@ -1,0 +1,17 @@
+const express = require("express");
+const auth = require("../middleware/authMiddleware");
+const controller = require("../controller/paperController");
+const router = express.Router();
+router.use(auth);
+router.get("/portfolio", controller.getPortfolio);
+router.get("/orders", controller.getOrders);
+router.post("/orders", controller.placeOrder);
+router.delete("/orders/:id", controller.cancelOrder);
+router.post("/orders/basket", controller.placeBasket);
+router.patch("/positions/:id/oco", controller.updateOco);
+router.post("/positions/:id/exit", controller.exitPosition);
+router.post("/positions/exit-all", controller.exitAll);
+router.get("/analytics", controller.getAnalytics);
+router.get("/journal", controller.getJournal);
+router.patch("/journal/:id/tags", controller.updateJournal);
+module.exports = router;

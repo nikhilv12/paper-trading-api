@@ -87,14 +87,15 @@ const placeOrder = async (userId, input, idempotencyKey, events) => {
     : null;
   return { order: fill?.order || order, fill, idempotentReplay: false };
 };
-const processQuote = async (quote, events) => {
+const processQuote = async (quote, events, userId = null) => {
   quoteService.setQuote(quote);
+  const scope = userId ? { user_id: userId } : {};
   const [orders, positions] = await Promise.all([
     db.PaperOrder.findAll({
-      where: { symbol_key: quote.symbolKey, status: "OPEN" },
+      where: { ...scope, symbol_key: quote.symbolKey, status: "OPEN" },
     }),
     db.PaperPosition.findAll({
-      where: { symbol_key: quote.symbolKey, status: "OPEN" },
+      where: { ...scope, symbol_key: quote.symbolKey, status: "OPEN" },
     }),
   ]);
   const fills = [];

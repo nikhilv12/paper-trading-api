@@ -172,4 +172,17 @@ exports.updateJournal = handler(async (req, res) =>
     "Journal updated",
   ),
 );
+const quoteSchema = Joi.object({
+  symbolKey: Joi.string().max(100).required(),
+  ltp: price.required(),
+  bid: price,
+  ask: price,
+  spot: price.required(),
+  timestamp: Joi.date().iso(),
+});
+exports.evaluateQuote = handler(async (req, res) => {
+  const quote = validate(quoteSchema, req.body);
+  const fills = await orderService.processQuote(quote, req.app.locals.io, req.user.id);
+  return success(res, { quote, fills }, "Quote evaluated");
+});
 exports.orderSchema = orderSchema;

@@ -6,6 +6,7 @@ router.use(auth);
 router.get("/portfolio", controller.getPortfolio);
 router.get("/orders", controller.getOrders);
 router.post("/orders", controller.placeOrder);
+router.post("/orders/evaluate-quote", controller.evaluateQuote);
 router.delete("/orders/:id", controller.cancelOrder);
 router.post("/orders/basket", controller.placeBasket);
 router.patch("/positions/:id/oco", controller.updateOco);

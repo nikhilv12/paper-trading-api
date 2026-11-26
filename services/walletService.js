@@ -1,5 +1,6 @@
 const db = require("../models");
 const env = require("../config/env");
+const number = (value) => Number(value) || 0;
 const getOrCreateWallet = async (userId, transaction) => {
   const [wallet] = await db.PaperWallet.findOrCreate({
     where: { user_id: userId },
@@ -23,6 +24,15 @@ const getPortfolio = async (userId) => {
       order: [["placed_at", "DESC"]],
     }),
   ]);
+  // Reconcile stale reservations left behind after the final position/order
+  // was closed. No open exposure means no margin can remain blocked.
+  if (!positions.length && !orders.length && number(wallet.blocked_margin) > 0) {
+    const released = number(wallet.blocked_margin);
+    await wallet.update({
+      available_cash: number(wallet.available_cash) + released,
+      blocked_margin: 0,
+    });
+  }
   return { wallet, positions, orders };
 };
 const resetWallet = async (userId) =>
